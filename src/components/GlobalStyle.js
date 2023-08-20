@@ -50,7 +50,7 @@ img {
   object-fit: cover;
 }
 
-button {
+/* button {
   display: block;
   padding: 4px 8px;
   font-family: inherit;
@@ -66,7 +66,7 @@ button {
 button:hover {
   color: #fff;
   background-color: #2d66c3;
-}
+} */
 
 
 

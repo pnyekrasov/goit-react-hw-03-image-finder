@@ -1,3 +1,8 @@
+import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Button } from './Button/Button';
+import { fetchPhotos } from 'pixabay-api';
+
 const { Component } = require('react');
 
 export class App extends Component {
@@ -7,24 +12,27 @@ export class App extends Component {
     page: 1,
   };
 
-  changeQuery = newQuery => {
-    this.setState({
-      query: `${Date.now()}/${newQuery}`,
-      images: [],
-      page: 1,
-    });
+  hendleChangeQuery = newQuery => {
+    !newQuery
+      ? alert('Enter the data in the field "Search images and photos", please')
+      : this.setState({
+          query: `${Date.now()}/${newQuery}`,
+          images: [],
+          page: 1,
+        });
   };
 
-  componentDidUpdate(_, prevState) {
+  async componentDidUpdate(_, prevState) {
     if (
       prevState.query !== this.state.query ||
       prevState.page !== this.state.page
     ) {
-      console.log(
-        `HTTP запрос за ${this.state.query}, и page=${this.state.page}`
-      );
-      // Не забываем отрезать req-id/ от query
-      // this.setState({ images: результат запроса })
+      const index = this.state.query.indexOf('/') + 1;
+      const currentQuery = this.state.query.slice(index);
+      const currentpage = this.state.page;
+      const photos = await fetchPhotos(currentQuery, currentpage);
+      console.log(photos.totalHits);
+      this.setState({ images: photos.hits });
     }
   }
 
@@ -34,26 +42,11 @@ export class App extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <form
-            onSubmit={evt => {
-              evt.preventDefault();
-              this.changeQuery(evt.target.elements.query.value);
-              evt.target.reset();
-            }}
-          >
-            <input type="text" name="query" />
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-
-        <div>Gallery</div>
-
-        <div>
-          <button onClick={this.handleLoadMore}>Load more</button>
-        </div>
-      </div>
+      <>
+        <Searchbar onChange={this.hendleChangeQuery} />
+        <ImageGallery items={this.images} />
+        <Button onClick={this.handleLoadMore} />
+      </>
     );
   }
 }

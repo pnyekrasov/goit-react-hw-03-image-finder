@@ -1,3 +1,3 @@
-<li class="gallery-item">
-  <img src="" alt="" />
-</li>;
+export const ImageGalleryItem = item => {
+  return <img src="" alt="" />;
+};
