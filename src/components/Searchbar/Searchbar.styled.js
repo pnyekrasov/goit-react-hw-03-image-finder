@@ -51,7 +51,7 @@ export const SearchFormButton = styled.button`
 
   &:active {
     color: #fff;
-    background: #828588;
+    background: lightgreen;
   }
 
   svg {

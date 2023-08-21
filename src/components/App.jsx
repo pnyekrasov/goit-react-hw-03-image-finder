@@ -2,6 +2,7 @@ import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { fetchPhotos } from 'pixabay-api';
+import { Container } from './App.styled';
 
 const { Component } = require('react');
 
@@ -31,7 +32,6 @@ export class App extends Component {
       const currentQuery = this.state.query.slice(index);
       const currentpage = this.state.page;
       const photos = await fetchPhotos(currentQuery, currentpage);
-      console.log(photos.totalHits);
       this.setState({ images: photos.hits });
     }
   }
@@ -41,12 +41,13 @@ export class App extends Component {
   };
 
   render() {
+    const { images } = this.state;
     return (
-      <>
+      <Container>
         <Searchbar onChange={this.hendleChangeQuery} />
-        <ImageGallery items={this.images} />
+        <ImageGallery items={images} />
         <Button onClick={this.handleLoadMore} />
-      </>
+      </Container>
     );
   }
 }
