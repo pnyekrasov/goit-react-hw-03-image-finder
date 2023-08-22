@@ -1,9 +1,6 @@
-import Modal from 'react-modal';
 import { GalleryPhoto } from './ImageGalleryItem.styled';
-
-const { Component } = require('react');
-
-Modal.setAppElement('#root');
+import { Component } from 'react';
+import { ModalWindow } from 'components/Modal/Modal';
 
 export class ImageGalleryItem extends Component {
   state = {
@@ -16,16 +13,14 @@ export class ImageGalleryItem extends Component {
 
   render() {
     const {
-      item: { webformatURL, tags },
+      item: { largeImageURL, webformatURL, tags },
     } = this.props;
     return (
       <>
         <GalleryPhoto src={webformatURL} alt={tags} onClick={this.openModal} />
-        <Modal
-          isOpen={this.state.isModalOpen}
-          onRequestClose={this.closeModal}
-          item={this.props}
-        />
+        <ModalWindow isOpen={this.state.isModalOpen} isClose={this.closeModal}>
+          <img src={largeImageURL} alt={tags} />
+        </ModalWindow>
       </>
     );
   }
