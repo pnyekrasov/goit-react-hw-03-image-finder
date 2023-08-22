@@ -29,7 +29,7 @@ export class App extends Component {
       : this.setState({
           query: `${Date.now()}/${newQuery}`,
           images: [],
-          page: 39,
+          page: 1,
           loading: false,
           total: 1,
         });
@@ -42,6 +42,7 @@ export class App extends Component {
     ) {
       try {
         this.setState({ loading: true });
+
         const index = this.state.query.indexOf('/') + 1;
         const currentQuery = this.state.query.slice(index);
         const currentpage = this.state.page;
@@ -49,11 +50,12 @@ export class App extends Component {
           currentQuery,
           currentpage
         );
-        this.setState({ total: totalHits, images: hits });
 
-        // this.setState(prevState => {
-        // return { images: [...prevState.images, hits] };
-        // this.setState({ images: [...prevState.images, hits] });
+        this.setState(prevState => ({
+          total: totalHits,
+          images: [...prevState.images, ...hits],
+        }));
+
         const notify = () =>
           toast.error(
             'Sorry, there are no images matching your search query. Please try again.'
@@ -73,18 +75,14 @@ export class App extends Component {
 
   render() {
     const { total, loading, images, page } = this.state;
-    // const notify = () =>
-    //   toast.success(
-    //     "We're sorry, but you've reached the end of search results."
-    //   );
-    toast.success('Successfully toasted!');
     const limit = Math.ceil(total / PER_PAGE);
-    // { page = limit && notify() };
+
     return (
       <Container>
         <Searchbar onChange={this.hendleChangeQuery} />
-        {loading ? <Loader /> : <ImageGallery items={images} />}
-        {images.length > 0 && page <= limit && (
+        {images.length > 0 && <ImageGallery items={images} />}
+        {loading && <Loader />}
+        {images.length > 0 && page !== limit && (
           <Button onClick={this.handleLoadMore} />
         )}
         <Toaster position="top-center" reverseOrder={false} />
