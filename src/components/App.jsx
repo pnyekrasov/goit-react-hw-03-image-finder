@@ -8,6 +8,12 @@ import { Component } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 const PER_PAGE = 12;
+const notifySubmit = () =>
+  toast.error('Enter the data in the field "Search images and photos", please');
+const notifySearch = () =>
+  toast.error(
+    'Sorry, there are no images matching your search query. Please try again.'
+  );
 
 export class App extends Component {
   state = {
@@ -16,23 +22,6 @@ export class App extends Component {
     page: 1,
     loading: false,
     total: 1,
-  };
-
-  hendleChangeQuery = newQuery => {
-    const notify = () =>
-      toast.error(
-        'Enter the data in the field "Search images and photos", please'
-      );
-
-    !newQuery.trim()
-      ? notify()
-      : this.setState({
-          query: `${Date.now()}/${newQuery}`,
-          images: [],
-          page: 1,
-          loading: false,
-          total: 1,
-        });
   };
 
   async componentDidUpdate(_, prevState) {
@@ -50,17 +39,13 @@ export class App extends Component {
           currentQuery,
           currentpage
         );
-
+        if (totalHits === 0) {
+          return notifySearch();
+        }
         this.setState(prevState => ({
           total: totalHits,
           images: [...prevState.images, ...hits],
         }));
-
-        const notify = () =>
-          toast.error(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-        totalHits === 0 && notify();
       } catch (error) {
         console.log(error);
       } finally {
@@ -68,6 +53,19 @@ export class App extends Component {
       }
     }
   }
+
+  hendleSubmit = newQuery => {
+    if (!newQuery.trim()) {
+      return notifySubmit();
+    }
+    this.setState({
+      query: `${Date.now()}/${newQuery}`,
+      images: [],
+      page: 1,
+      loading: false,
+      total: 1,
+    });
+  };
 
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
@@ -79,7 +77,7 @@ export class App extends Component {
 
     return (
       <Container>
-        <Searchbar onChange={this.hendleChangeQuery} />
+        <Searchbar onChange={this.hendleSubmit} />
         {images.length > 0 && <ImageGallery items={images} />}
         {loading && <Loader />}
         {images.length > 0 && page !== limit && (

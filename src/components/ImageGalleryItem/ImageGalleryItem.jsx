@@ -7,9 +7,8 @@ export class ImageGalleryItem extends Component {
     isModalOpen: false,
   };
 
-  openModal = () => this.setState({ isModalOpen: true });
-
-  closeModal = () => this.setState({ isModalOpen: false });
+  toggleModal = () =>
+    this.setState(prevState => ({ isModalOpen: !prevState.isModalOpen }));
 
   render() {
     const {
@@ -17,8 +16,12 @@ export class ImageGalleryItem extends Component {
     } = this.props;
     return (
       <>
-        <GalleryPhoto src={webformatURL} alt={tags} onClick={this.openModal} />
-        <ModalWindow isOpen={this.state.isModalOpen} isClose={this.closeModal}>
+        <GalleryPhoto
+          src={webformatURL}
+          alt={tags}
+          onClick={this.toggleModal}
+        />
+        <ModalWindow isOpen={this.state.isModalOpen} isClose={this.toggleModal}>
           <img src={largeImageURL} alt={tags} />
         </ModalWindow>
       </>
